@@ -16,21 +16,48 @@ public class MainActivity extends AppCompatActivity {
     boolean isPlayer1 = true;
     boolean gameover = false;
     TextView textView;
+    Button buttonReset;
+    GridLayout g;
+    int count;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        GridLayout g = findViewById(R.id.gridLayout);
+        g = findViewById(R.id.gridLayout);
         textView = findViewById(R.id.textView);
+        buttonReset = findViewById(R.id.buttonReset);
 
 
-        buttons = new Button[NUM_ROWS_COLS][NUM_ROWS_COLS];
+        initGame();
+        addButtons();
+
+        buttonReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initGame();
+                addButtons();
+            }
+        });
+
+
+    }
+
+
+    public void initGame() {
+        g.removeAllViews();
+        gameover = false;
+        isPlayer1 = true;
+        count = 0;
+        textView.setText("Turn of player1 [ X ]");
         g.setRowCount(NUM_ROWS_COLS);
         g.setColumnCount(NUM_ROWS_COLS);
+    }
 
+
+    public void addButtons() {
+        buttons = new Button[NUM_ROWS_COLS][NUM_ROWS_COLS];
         for (int i = 0; i < NUM_ROWS_COLS; i++) {
             for (int j = 0; j < NUM_ROWS_COLS; j++) {
                 buttons[i][j] = new Button(getApplicationContext(), null, android.R.attr.buttonStyleSmall);
@@ -40,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         Button button = (Button) v;
 
-                        if (gameover == false) {
+                        if (gameover == false && button.getText().toString().equals("")) {
                             if (isPlayer1) {
                                 button.setText("X");
                                 textView.setText("Turn of player2 [ 0 ]");
@@ -65,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void checkLine(boolean isPlayerOne) {
-        int count = 0;
+        count = 0;
         String toCheck;
         int player;
         if (isPlayerOne) {
