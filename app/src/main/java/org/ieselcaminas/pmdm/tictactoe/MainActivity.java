@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     Button buttonReset;
     GridLayout g;
     int count;
+    int drawCounter;
 
 
     @Override
@@ -28,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
         g = findViewById(R.id.gridLayout);
         textView = findViewById(R.id.textView);
         buttonReset = findViewById(R.id.buttonReset);
-
 
         initGame();
         addButtons();
@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         textView.setText("Turn of player1 [ X ]");
         g.setRowCount(NUM_ROWS_COLS);
         g.setColumnCount(NUM_ROWS_COLS);
+        drawCounter = 0;
     }
 
 
@@ -62,32 +63,33 @@ public class MainActivity extends AppCompatActivity {
             for (int j = 0; j < NUM_ROWS_COLS; j++) {
                 buttons[i][j] = new Button(getApplicationContext(), null, android.R.attr.buttonStyleSmall);
                 g.addView(buttons[i][j]);
-                buttons[i][j].setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Button button = (Button) v;
-
-                        if (gameover == false && button.getText().toString().equals("")) {
-                            if (isPlayer1) {
-                                button.setText("X");
-                                textView.setText("Turn of player2 [ 0 ]");
-                                checkLine(isPlayer1);
-                                isPlayer1 = false;
-
-
-                            } else {
-                                button.setText("O");
-                                textView.setText("Turn of player1 [ X ]");
-                                checkLine(isPlayer1);
-                                isPlayer1 = true;
-
-
-                            }
-                        }
-                    }
-                });
+                pressButton(buttons[i][j]);
             }
         }
+    }
+
+
+    public void pressButton(Button button) {
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Button button = (Button) v;
+                drawCounter++;
+                if (gameover == false && button.getText().toString().equals("")) {
+                    if (isPlayer1) {
+                        button.setText("X");
+                        textView.setText("Turn of player2 [ 0 ]");
+                        checkLine(isPlayer1);
+                        isPlayer1 = false;
+                    } else {
+                        button.setText("O");
+                        textView.setText("Turn of player1 [ X ]");
+                        checkLine(isPlayer1);
+                        isPlayer1 = true;
+                    }
+                }
+            }
+        });
     }
 
 
@@ -102,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
             toCheck = "O";
             player = 2;
         }
+
         for (int i = 0; i < NUM_ROWS_COLS; i++) {
             for (int j = 0; j < NUM_ROWS_COLS; j++) {
                 if (buttons[i][j].getText().toString().equals(toCheck)) {
@@ -148,6 +151,26 @@ public class MainActivity extends AppCompatActivity {
         } else {
             count = 0;
         }
-        return;
+
+
+        for (int i = 0; i < NUM_ROWS_COLS; i++) {
+            if (buttons[i][2 - i].getText().toString().equals(toCheck)) {
+                count++;
+            }
+        }
+        if (count == 3) {
+            textView.setText("You win player" + player);
+            gameover = true;
+            return;
+        } else {
+            count = 0;
+        }
+
+
+        if (drawCounter == 9) {
+            textView.setText("Draw!");
+            gameover = true;
+            return;
+        }
     }
 }
